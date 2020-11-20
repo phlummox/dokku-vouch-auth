@@ -16,8 +16,8 @@ I can migrate my web apps from Dokku to some other PAAS – probably
 As a side effect, this plugin also allows dokku apps to specify commands
 that need to be run when the ["nginx-pre-reload"][nginx-pre-reload] event
 happens in the lifecycle of the app – i.e., just before dokku reloads ningx
-conf files. (This actually can happen more often than you might expect
-- so make sure any actions taken by your commands allow for the
+conf files. (This actually can happen more often than you might expect -
+so make sure any actions taken by your commands allow for the
 possibility they might already have been run - i.e. are idempotent.)
 
 ["nginx-pre-reload"]: http://dokku.viewdocs.io/dokku~v0.21.4/development/plugin-triggers/#nginx-pre-reload
@@ -70,7 +70,8 @@ what it is.)
 effort.) Also it expects the `APP` environment var to contain the name
 of your Dokku app.
 
-Triggers:
+## Dokku plugin triggers
+
  - [x] post-extract: The plugin executes code when the
    [`post-extract`][post-extract] trigger occurs, to copy the
    file `hooks/nginx-pre-reload` from your Git repository,
@@ -82,7 +83,7 @@ Triggers:
 [post-extract]: http://dokku.viewdocs.io/dokku~v0.21.4/development/plugin-triggers/#post-extract
 [nginx-pre-reload]: http://dokku.viewdocs.io/dokku~v0.21.4/development/plugin-triggers/#nginx-pre-reload
 
-### How it works
+## How it works
 
 `add-vouch-auth.pl` generates a patch file, intended to add
 Vouch-proxy-based authentication to your app's `nginx.conf`
@@ -91,7 +92,7 @@ If it can't, it emits a warning but doesn't fail.
 
 [patch]: http://savannah.gnu.org/projects/patch/ 
 
-### Configuration
+## Configuration
 
 The folder where scripts are loaded can be overridden by setting the
 `HOOKS_DIR` variable for a dokku app.
@@ -113,9 +114,8 @@ dokku_domain="mydomain.com";
 APP=$APP /var/lib/dokku/plugins/available/vouch-auth/add-vouch-auth.pl "$vouch_host" "$vouch_port" "$dokku_domain";
 ```
 
-When deploying you app to dokku, a whole bunch of new log messages should
+When deploying your app to dokku, a whole bunch of new log messages should
 now appear during the build-and-deploy process.
- you should see the following instructions
 
 ## Pre-requisites
 
