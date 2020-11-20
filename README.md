@@ -15,19 +15,19 @@ I can migrate my web apps from Dokku to some other PAAS – probably
 
 As a side effect, this plugin also allows dokku apps to specify commands
 that need to be run when the ["nginx-pre-reload"][nginx-pre-reload] event
-happens in the lifecycle of the app -- i.e., just before dokku reloads ningx
+happens in the lifecycle of the app – i.e., just before dokku reloads ningx
 conf files. (This actually can happen more often than you might expect
--- so make sure any actions taken by your commands allow for the
-possibility they might already have been run -- i.e. are idempotent.)
+- so make sure any actions taken by your commands allow for the
+possibility they might already have been run - i.e. are idempotent.)
 
 ["nginx-pre-reload"]: http://dokku.viewdocs.io/dokku~v0.21.4/development/plugin-triggers/#nginx-pre-reload
 
 Why might you want to do that? Well, one reason would be to get around the
 constraints Dokku imposes on how Docker-based apps may customize the nginx
-configuration -- they have to store a complete `.sigil` template inside the
+configuration - they have to store a complete `.sigil` template inside the
 Docker container, even if it is never used by anything running in the
 container... There seems to be no easy way of overriding *bits*
-of the app=specific Nginx config. Anyway.
+of the app-specific Nginx config. Anyway.
 If you're careful, this plugin should let you alter or check the nginx.conf
 file just before it loads.
 
