@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+
+copy-nginx-hook-file() {
+  declare APP="$1" TMPDIR="$2"
+  dokku_log_info1 \
+    "Checking for custom nginx hook script supplied in $APP repo"
+  expec_script_name=nginx-pre-reload
+  if [[ -f "$TMPDIR/hooks/$expec_script_name" ]] ; then
+    dokku_log_info2 \
+      "copying $APP script hooks/$expec_script_name from repo to app dir"
+    output=$(cp "$TMPDIR/hooks/$expec_script_name" "$DOKKU_ROOT/$APP")
+    dokku_log_verbose_quiet "$output"
+  fi
+}
+
+dokku_log_info1 "dokku-custom- ...etc. post-extract script"
+
+copy-nginx-hook-file "$@"
+

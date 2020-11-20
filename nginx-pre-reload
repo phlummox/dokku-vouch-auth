@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+# probably almost none of these are needed
+source "$PLUGIN_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_AVAILABLE_PATH/certs/functions"
+source "$PLUGIN_AVAILABLE_PATH/config/functions"
+source "$PLUGIN_AVAILABLE_PATH/proxy/functions"
+source "$PLUGIN_AVAILABLE_PATH/nginx-vhosts/functions"
+
+APP="$1";
+eval "$(config_export app "$APP")"
+APP_ROOT="$DOKKU_ROOT/$APP"
+
+# These args -- as at dokku version 0.21.4 --
+# do not actually appear to even get passed:
+#    INTERNAL_PORT="$2";
+#    INTERNAL_IP_ADDRESS="$3";
+
+HOOKS_DIR=${HOOKS_DIR:-hooks}
+
+EXPECTED_SCRIPT_NAME=nginx-pre-reload
+
+dokku_log_info1 "Checking for $EXPECTED_SCRIPT_NAME script in app $APP"
+dokku_log_info2 "specifically, file $APP_ROOT/$EXPECTED_SCRIPT_NAME"
+
+my_res=`[ -f "$APP_ROOT/$EXPECTED_SCRIPT_NAME" ]; echo $?`
+
+dokku_log_info2 "Script found?: $my_res"
+
+if [ -f "$APP_ROOT/$EXPECTED_SCRIPT_NAME" ]; then
+
+    if [ ! -x "$APP_ROOT/$EXPECTED_SCRIPT_NAME" ]; then
+        dokku_log_warn "Adding missing execution permission. Please check your permissions."
+        chmod +x $APP_ROOT/$EXPECTED_SCRIPT_NAME
+    fi
+
+    dokku_log_info2 "Running $EXPECTED_SCRIPT_NAME script"
+    APP=$APP $APP_ROOT/$EXPECTED_SCRIPT_NAME
+    if [ $? -ne 0 ] ; then
+      dokku_log_error2 "error running $APP_ROOT/$EXPECTED_SCRIPT_NAME";
+      exit 1;
+    fi
+    dokku_log_info2 "Finished running $EXPECTED_SCRIPT_NAME script"
+fi
